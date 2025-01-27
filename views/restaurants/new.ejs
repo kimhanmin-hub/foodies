@@ -1,0 +1,24 @@
+<% layout('layout') %>
+
+<div class="container mt-4">
+    <h1>새 음식점 추가</h1>
+    <form action="/restaurants" method="POST" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="name" class="form-label">음식점 이름</label>
+            <input type="text" class="form-control" id="name" name="name" required>
+        </div>
+        <div class="mb-3">
+            <label for="cuisine" class="form-label">요리 종류</label>
+            <input type="text" class="form-control" id="cuisine" name="cuisine" required>
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">설명</label>
+            <textarea class="form-control" id="description" name="description" required></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="image" class="form-label">이미지</label>
+            <input type="file" class="form-control" id="image" name="image" multiple>
+        </div>
+        <button type="submit" class="btn btn-primary">추가</button>
+    </form>
+</div>

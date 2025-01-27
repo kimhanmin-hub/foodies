@@ -1,0 +1,33 @@
+<% layout('layout') %>
+
+<div class="container mt-4">
+    <h1 class="mb-4">음식점 관리</h1>
+    <a href="/restaurants/new" class="btn btn-primary mb-3">새 음식점 추가</a>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>이름</th>
+                <th>요리 종류</th>
+                <th>작성자</th>
+                <th>리뷰 수</th>
+                <th>관리</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% restaurants.forEach(restaurant => { %>
+                <tr>
+                    <td><%= restaurant.name %></td>
+                    <td><%= restaurant.cuisine %></td>
+                    <td><%= restaurant.author.username %></td>
+                    <td><%= restaurant.reviews.length %></td>
+                    <td>
+                        <a href="/restaurants/<%= restaurant._id %>/edit" class="btn btn-sm btn-warning">수정</a>
+                        <form action="/restaurants/<%= restaurant._id %>?_method=DELETE" method="POST" class="d-inline">
+                            <button class="btn btn-sm btn-danger">삭제</button>
+                        </form>
+                    </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</div>

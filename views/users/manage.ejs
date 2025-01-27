@@ -1,0 +1,48 @@
+<% layout('layout') %>
+
+<div class="container mt-4">
+    <h1 class="mb-4">회원 관리</h1>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>이메일</th>
+                <th>사용자 이름</th>
+                <th>역할</th>
+                <th>가입일</th>
+                <th>관리</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% users.forEach(user => { %>
+                <tr>
+                    <td><%= user.email %></td>
+                    <td><%= user.username %></td>
+                    <td>
+                        <form action="/users/manage/<%= user._id %>/role?_method=PUT" method="POST" class="d-inline">
+                            <select name="role" onchange="this.form.submit()" class="form-select form-select-sm">
+                                <option value="user" <%= user.role === 'user' ? 'selected' : '' %>>평회원</option>
+                                <option value="master" <%= user.role === 'master' ? 'selected' : '' %>>마스터</option>
+                            </select>
+                        </form>
+                    </td>
+                    <td><%= user.createdAt.toLocaleDateString() %></td>
+                    <td>
+                        <form action="/users/manage/<%= user._id %>?_method=DELETE" method="POST" class="d-inline delete-form">
+                            <button class="btn btn-sm btn-danger">삭제</button>
+                        </form>
+                    </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    document.querySelectorAll('.delete-form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            if(!confirm('정말로 이 사용자를 삭제하시겠습니까?')) {
+                e.preventDefault();
+            }
+        });
+    });
+</script>

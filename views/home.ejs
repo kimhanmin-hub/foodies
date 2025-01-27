@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>홈 페이지</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <h1>홈 페이지</h1>
+    
+    <% if(currentUser){ %>
+        <h2>환영합니다, <%= currentUser.username %>님!</h2>
+    <% } else { %>
+        <h2>음식점 검색 서비스에 오신 것을 환영합니다!</h2>
+    <% } %>
+
+    <nav>
+        <ul>
+            <li><a href="/">메인 페이지 (index)</a></li>
+            <li><a href="/restaurants">음식점 목록 (main)</a></li>
+            <li><a href="/restaurants/1">음식점 상세 정보 (show) - 예시 ID: 1</a></li>
+        </ul>
+    </nav>
+
+    <% if(currentUser){ %>
+        <p><a href="/logout">로그아웃</a></p>
+    <% } else { %>
+        <p><a href="/login">로그인</a> | <a href="/register">회원가입</a></p>
+    <% } %>
+
+    <footer>
+        <p>&copy; 2024 음식점 검색 서비스. All rights reserved.</p>
+    </footer>
+
+    <script>
+        console.log(<%= JSON.stringify(currentUser) %>);
+    </script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<% layout('layout') %>
+
+<div class="container mt-4">
+  <h1>실시간 채팅</h1>
+  <div id="messages" style="height: 400px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;"></div>
+  <form id="chat-form" class="mt-3">
+    <div class="input-group">
+      <input type="text" id="chat-input" class="form-control" placeholder="메시지를 입력하세요" autocomplete="off">
+      <button class="btn btn-primary" type="submit">전송</button>
+    </div>
+  </form>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  const socket = io();
+  const messages = document.getElementById('messages');
+  const chatForm = document.getElementById('chat-form');
+  const chatInput = document.getElementById('chat-input');
+
+  chatForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (chatInput.value) {
+      socket.emit('chat message', { username: '<%= currentUser.username %>', message: chatInput.value });
+      chatInput.value = '';
+    }
+  });
+
+  socket.on('chat message', (msg) => {
+    const item = document.createElement('div');
+    item.textContent = `${msg.username}: ${msg.message}`;
+    messages.appendChild(item);
+    messages.scrollTop = messages.scrollHeight;
+  });
+</script>

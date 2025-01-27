@@ -1,0 +1,42 @@
+<% layout('layout') %>
+
+<div class="container mt-4">
+    <h1>리뷰 수정</h1>
+    <h2><%= restaurant.name %></h2>
+
+    <form action="/restaurants/<%= restaurant._id %>/reviews/<%= review._id %>?_method=PUT" method="POST">
+        <div class="mb-3">
+            <label for="rating" class="form-label">평점</label>
+            <div class="star-rating">
+                <% for(let i = 5; i >= 1; i--) { %>
+                    <input type="radio" id="star<%= i %>" name="review[rating]" value="<%= i %>" <%= review.rating === i ? 'checked' : '' %> />
+                    <label for="star<%= i %>" title="<%= i %> stars">
+                        <i class="fas fa-star"></i>
+                    </label>
+                <% } %>
+            </div>
+        </div>
+        <div class="mb-3">
+            <label for="body" class="form-label">리뷰 내용</label>
+            <textarea class="form-control" name="review[body]" id="body" cols="30" rows="3" required><%= review.body %></textarea>
+        </div>
+        <button class="btn btn-primary">수정하기</button>
+    </form>
+</div>
+
+<script>
+    const starRating = document.querySelector('.star-rating');
+    const stars = starRating.querySelectorAll('input');
+    const starsLabel = starRating.querySelectorAll('label');
+
+    stars.forEach((star, index) => {
+        star.addEventListener('click', () => {
+            for (let i = 0; i <= index; i++) {
+                starsLabel[i].classList.add('text-warning');
+            }
+            for (let i = index + 1; i < stars.length; i++) {
+                starsLabel[i].classList.remove('text-warning');
+            }
+        });
+    });
+</script>

@@ -1,0 +1,95 @@
+<% layout('layout') %>
+
+<div class="container mt-4">
+    <h1><%= restaurant.name %></h1>
+    <p>평균 평점: <%= restaurant.averageRating %> / 5</p>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <% if (restaurant.images && restaurant.images.length > 0) { %>
+                <div id="restaurantCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        <% restaurant.images.forEach((image, index) => { %>
+                            <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+                                <img src="<%= image.url %>" class="d-block w-100" alt="<%= restaurant.name %>">
+                            </div>
+                        <% }) %>
+                    </div>
+                    <% if (restaurant.images.length > 1) { %>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#restaurantCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#restaurantCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    <% } %>
+                </div>
+            <% } else { %>
+                <img src="/images/default-restaurant.jpg" class="img-fluid" alt="Default restaurant image">
+            <% } %>
+        </div>
+        <div class="col-md-6">
+            <h2>상세 정보</h2>
+            <p><strong>요리 종류:</strong> <%= restaurant.cuisine %></p>
+            <p><strong>설명:</strong> <%= restaurant.description %></p>
+            <p><strong>작성자:</strong> <%= restaurant.author.username %></p>
+            
+            <% if (currentUser && restaurant.author.equals(currentUser._id)) { %>
+                <a href="/restaurants/<%= restaurant._id %>/edit" class="btn btn-info">수정</a>
+                <form action="/restaurants/<%= restaurant._id %>?_method=DELETE" method="POST" style="display: inline;">
+                    <button class="btn btn-danger">삭제</button>
+                </form>
+            <% } %>
+        </div>
+    </div>
+
+    <h2 class="mt-4">리뷰</h2>
+    <% if (currentUser) { %>
+        <form action="/restaurants/<%= restaurant._id %>/reviews" method="POST" class="mb-3">
+            <div class="mb-3">
+                <label for="rating" class="form-label">평점</label>
+                <select class="form-select" id="rating" name="review[rating]" required>
+                    <option value="">선택하세요</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="body" class="form-label">리뷰 내용</label>
+                <textarea class="form-control" id="body" name="review[body]" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-success">리뷰 작성</button>
+        </form>
+    <% } %>
+
+    <% if (restaurant.reviews.length > 0) { %>
+        <% restaurant.reviews.forEach(review => { %>
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <% for(let i = 1; i <= 5; i++) { %>
+                            <i class="fas fa-star <%= i <= review.rating ? 'text-warning' : 'text-secondary' %>"></i>
+                        <% } %>
+                    </h5>
+                    <p class="card-text"><%= review.body %></p>
+                    <p class="card-text">
+                        <small class="text-muted">작성자: <%= review.author.username %></small>
+                    </p>
+                    <% if (currentUser && review.author.equals(currentUser._id)) { %>
+                        <a href="/restaurants/<%= restaurant._id %>/reviews/<%= review._id %>/edit" class="btn btn-sm btn-info">수정</a>
+                        <form action="/restaurants/<%= restaurant._id %>/reviews/<%= review._id %>?_method=DELETE" method="POST" style="display: inline;">
+                            <button class="btn btn-sm btn-danger">삭제</button>
+                        </form>
+                    <% } %>
+                </div>
+            </div>
+        <% }) %>
+    <% } else { %>
+        <p>아직 리뷰가 없습니다.</p>
+    <% } %>
+</div>
