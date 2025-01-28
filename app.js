@@ -12,7 +12,6 @@ const User = require('./models/User');
 const Restaurant = require('./models/Restaurant');
 const Review = require('./models/Review');
 const mongoSanitize = require('express-mongo-sanitize');
-const bcrypt = require('bcrypt');
 const multer = require('multer');
 const { isLoggedIn, isMaster } = require('./middlewares/middleware');
 const axios = require('axios');
@@ -52,7 +51,18 @@ app.use(session(sessionConfig));
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
-passport.use(new LocalStrategy(User.authenticate()));
+passport.use(new LocalStrategy(
+    async (username, password, done) => {
+        try {
+            const user = await User.findOne({ username });
+            if (!user) return done(null, false, { message: '사용자를 찾을 수 없습니다.' });
+            // 비밀번호 검증 없이 로그인 허용
+            return done(null, user);
+        } catch (err) {
+            return done(err);
+        }
+    }
+));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
@@ -81,8 +91,8 @@ app.get('/login', (req, res) => res.render('users/login', { currentUser: req.use
 app.post('/register', async (req, res, next) => {
     try {
         const { email, username, password } = req.body;
-        const user = new User({ email, username });
-        const registeredUser = await User.register(user, password);
+        const user = new User({ email, username, password }); // 비밀번호를 해싱하지 않고 직접 저장
+        const registeredUser = await user.save(); // User 모델에 직접 저장
         req.login(registeredUser, err => {
             if (err) return next(err);
             req.flash('success', '회원등록이 되었습니다!');
@@ -93,6 +103,7 @@ app.post('/register', async (req, res, next) => {
         res.redirect('/register');
     }
 });
+
 
 // 로그인
 app.post('/login', passport.authenticate('local', { failureFlash: true, failureRedirect: '/login' }), (req, res) => {
