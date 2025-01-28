@@ -21,7 +21,7 @@ const http = require('http').createServer(app);
 const io = require('socket.io')(http);
 
 // MongoDB 연결
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/restaurant_app')
+mongoose.connect(process.env.DB_URI || 'mongodb://localhost:27017/restaurant_app')
     .then(() => console.log('MongoDB에 연결되었습니다.'))
     .catch(err => console.error('MongoDB 연결 오류:', err));
 
